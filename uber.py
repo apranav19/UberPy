@@ -28,8 +28,7 @@ def logout():
     """
         Signs a user out and clears the session data
     """
-    session.pop('current_user')
-    session.pop('uber_at')
+    session.clear()
     return redirect(url_for('index'))
 
 @app.route('/products')
