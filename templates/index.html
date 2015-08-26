@@ -1,6 +1,38 @@
-<html>
-  <body>
-      <h1> Hello Uber </h1>
-      <a href="/login">Login</a>
+<html ng-app="uberpy" lang="en">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.4/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.4/angular-route.min.js"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <!-- CSS CDN -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+
+  </head>
+  <body ng-controller="mainController">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+          <div class="navbar-header">
+              <a class="navbar-brand" style="color:white"> UberPy </a>
+          </div>
+          <div class="collapse navbar-collapse">
+              <ul class="nav navbar-nav">
+                  <li class="active">
+                    <a href="/#/">Dashboard</a>
+                  </li>
+                  <li>
+                    <a href="/#/reports">Reports</a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+    </nav>
+    <!-- END NAVBAR -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12" ng-view>
+            </div>
+        </div>
+    </div>
   </body>
 </html>

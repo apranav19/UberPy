@@ -13,6 +13,10 @@ def index():
         return redirect(url_for('profile'))
     return render_template('index.html')
 
+@app.route('/test_profile')
+def test_profile():
+    return render_template('profile.html')
+
 @app.route('/profile')
 def profile():
     if 'uber_at' in session:
