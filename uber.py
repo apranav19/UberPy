@@ -1,19 +1,28 @@
 from flask import Flask, render_template, redirect, session, url_for, request, jsonify
 from rauth import OAuth2Service
 from user import User
+import sys
+from simplekv.memory import DictStore
+from flask_kvsession import KVSessionExtension
+
 import requests
 
 app = Flask(__name__)
 app.config.from_object('app_config')
 app.secret_key=app.config['APP_SECRET']
 
+store = DictStore()
+KVSessionExtension(store, app)
+
+ACCESS_TOKEN_SESSION_ID = 'uber_at'
+USER_SESSION_ID = 'current_user'
+
 @app.route('/')
 def index():
-    current_user = session.get('current_user', None)
-    if 'uber_at' in session:
-        if not current_user:
-            current_user = create_user_object()
-    return render_template('index.html', user=current_user)
+    if ACCESS_TOKEN_SESSION_ID in session:
+        if not 'current_user' in session:
+            create_user_object()
+    return render_template('index.html', user=session.get('current_user', None)))
 
 @app.route('/login')
 def login():
@@ -36,7 +45,7 @@ def get_products():
     """
         Fetches the list of products from Uber
     """
-    if 'uber_at' in session:
+    if ACCESS_TOKEN_SESSION_ID in session:
         products_data = requests.get(
             app.config['API_URL']+'products',
             headers={
@@ -80,7 +89,7 @@ def login_redirect():
 
     access_token = response.json().get('access_token')
     if access_token:
-        session['uber_at'] = access_token
+        session[ACCESS_TOKEN_SESSION_ID] = access_token
     return redirect(url_for('index'))
 
 def create_uber_auth():
@@ -111,11 +120,17 @@ def create_user_object():
     user_data = requests.get(
         app.config['API_URL']+'me',
         headers={
-            'Authorization': 'Bearer {0}'.format(session['uber_at'])
+            'Authorization': 'Bearer {0}'.format(session[ACCESS_TOKEN_SESSION_ID])
         }
     ).json()
     session['current_user'] = user_data
-    return user_data
+    print('Session size: ' + str(sys.getsizeof(session['current_user'])))
+
+def check_authorized_session():
+    """
+        Returns True if access token is present
+    """
+    return ACCESS_TOKEN_SESSION_ID in session
 
 if __name__ == '__main__':
     app.run()
