@@ -21,7 +21,22 @@
                     <a href="/#/">Dashboard</a>
                   </li>
                   <li>
-                    <a href="/#/reports">Reports</a>
+                    <a href="/#/products">Products</a>
+                  </li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                    {% if not user %}
+                      <li>
+                        <a href="/login">Login</a>
+                      </lI>
+                    {% else %}
+                      <li>
+                        <a> Hi, {{ user.first_name }} </a>
+                      </li>
+                      <li>
+                          <a href="/logout"> Logout </a>
+                      </li>
+                    {% endif %}
                   </li>
               </ul>
           </div>
