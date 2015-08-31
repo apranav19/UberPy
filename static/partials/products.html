@@ -1,6 +1,17 @@
 <div class="jumbotron">
   <h2> Products </h2>
   <div ng-repeat="product in products">
-      <h4> {[ product ]} </h4>
+      <h4> Product Id: {[ product.product_id ]} </h4>
+      <ul>
+        <li>
+          <p> Description: {[ product.description ]} </p>
+        </li>
+        <li>
+          <p> Display Name: {[ product.display_name ]} </p>
+        </li>
+        <li>
+          <p> Capacity: {[ product.capacity ]} </p>
+        </li>
+      <ul>
   </div>
 </div>
