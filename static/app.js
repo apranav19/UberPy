@@ -12,6 +12,10 @@ uberpy.config(function($interpolateProvider, $routeProvider){
     .when('/products', {
       templateUrl: '../static/partials/products.html',
       controller: 'productsController'
+    })
+    .when('/simulate', {
+      templateUrl: '../static/partials/simulate.html',
+      controller: 'simulatorController'
     });
 
 });
@@ -21,7 +25,7 @@ uberpy.controller('mainController', function($scope){
 });
 
 uberpy.controller('productsController', function($scope, $http){
-  $http.get('/products')
+  $http.get('/products.json')
     .success(function(data, code){
       $scope.products = data.products;
     })
@@ -30,4 +34,17 @@ uberpy.controller('productsController', function($scope, $http){
       console.log(code);
     });
   $scope.message = 'This is the profile controller';
+});
+
+uberpy.controller('simulatorController', function($scope, $http){
+  $scope.message = "This is the simulator";
+  $('#simulate-btn').on('click', function(){
+    $http.get('/simulate.json')
+      .success(function(data, code){
+        console.log(data);
+      })
+      .error(function(data, code){
+        console.log(data);
+      });
+  });
 });

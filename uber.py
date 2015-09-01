@@ -4,6 +4,7 @@ from user import User
 import sys
 from simplekv.memory import DictStore
 from flask_kvsession import KVSessionExtension
+import json
 
 import requests
 
@@ -22,7 +23,7 @@ def index():
     if ACCESS_TOKEN_SESSION_ID in session:
         if not 'current_user' in session:
             create_user_object()
-    return render_template('index.html', user=session.get('current_user', None)))
+    return render_template('index.html', user=session.get('current_user', None))
 
 @app.route('/login')
 def login():
@@ -40,7 +41,7 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-@app.route('/products')
+@app.route('/products.json')
 def get_products():
     """
         Fetches the list of products from Uber
@@ -69,6 +70,28 @@ def unauthorized_view(error=None):
     resp.status_code = 401
     return resp
 
+@app.route('/simulate.json')
+def simulate_request():
+    """
+        Makes a sandbox request
+    """
+    if ACCESS_TOKEN_SESSION_ID in session:
+        ride_response = requests.post(
+            app.config['SANDBOX_API_URL']+'requests',
+            headers={
+                'Authorization': 'Bearer {0}'.format(session['uber_at']),
+                'Content-Type': 'application/json'
+            },
+            data=json.dumps({
+                'product_id': 'a1111c8c-c720-46c3-8534-2fcdd730040d',
+                'start_latitude': 37.794428,
+                'start_longitude': -122.418028,
+                'end_latitude': 37.797028,
+                'end_longitude': -122.399482,
+            })
+        ).json()
+        return jsonify(ride_response)
+    return unauthorized_view("Unauthorized View")
 
 @app.route('/callback')
 def login_redirect():
@@ -108,7 +131,7 @@ def create_uber_auth():
     uber_params = {
         'response_type': 'code',
         'redirect_uri': app.config['REDIRECT_URI'],
-        'scope': 'profile',
+        'scope': 'profile request',
     }
 
     return uber_obj.get_authorize_url(**uber_params)
